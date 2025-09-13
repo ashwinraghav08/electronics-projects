@@ -16,9 +16,9 @@ This is my real circuit wired on a breadboard:
 Here’s the LED working in real life (click to download or view):  
 [Button LED Demo](button_led_demonstration.MOV)
 
-### TinkerCAD Simulation
-This is the beginner-friendly online simulation of the same circuit, created in TinkerCAD:  
-![TinkerCAD Screenshot](button_led_tinkercat)
+### TinkerCAD Simulation (Video)
+Beginner-friendly online simulation of the same circuit, recorded from TinkerCAD:  
+[Button LED TinkerCAD Demo](button_led_tinkercat.mov)
 
 ---
 
