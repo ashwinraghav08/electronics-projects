@@ -104,7 +104,7 @@ void loop() {
 ---
 
 ## 📹 Demonstration
-🎥 [Watch the demo](joystick_stepper_demonstration.MOV)  
+🎥 [Download the demo video](joystick_stepper_demonstration.MOV)  
 
 ---
 
