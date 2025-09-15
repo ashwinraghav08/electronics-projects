@@ -1,69 +1,44 @@
-# Button-Controlled LED 💡
+#include <AccelStepper.h>
 
-## Overview
-This is my first Arduino project: pressing a button turns an LED on and off.  
-It’s a beginner-friendly introduction to **digital inputs**, **digital outputs**, and how to wire a basic circuit with Arduino.
+// Stepper motor pins (28BYJ-48 with ULN2003 driver)
+#define IN1 2
+#define IN2 3
+#define IN3 4
+#define IN4 5
 
----
+// IMPORTANT: 28BYJ-48 pin order for AccelStepper is IN1, IN3, IN2, IN4
+AccelStepper stepper(AccelStepper::FULL4WIRE, IN1, IN3, IN2, IN4);
 
-## Media
+// Joystick pin
+#define JOY_X A0
 
-### Real Circuit Photo
-This is my real circuit wired on a breadboard:  
-![Button LED Circuit](button_led_image.JPG)
+// Settings
+const int DEADZONE = 80;       // ignore small joystick movement
+const int MAX_SPEED = 2000;    // top motor speed (steps/sec)
+const int ACCEL_STEP = 20;     // acceleration step size
 
-### Demo Video
-Here’s the LED working in real life (click to download or view):  
-[Button LED Demo](button_led_demonstration.MOV)
-
-### TinkerCAD Simulation (Video)
-Beginner-friendly online simulation of the same circuit, recorded from TinkerCAD:  
-[Button LED TinkerCAD Demo](button_led_tinkercat.mov)
-
----
-
-## Components
-- Arduino Mega 2560 (Elegoo)  
-- 1× Pushbutton  
-- 1× LED  
-- 1× 220 Ω resistor  
-- Jumper wires + breadboard  
-
----
-
-## Wiring
-- Button leg 1 → Pin 2  
-- Button leg 2 → GND  
-- LED anode (long leg) → resistor → Pin 12  
-- LED cathode (short leg) → GND  
-
----
-
-## Code
-Arduino sketch for this project:  
-[button_led_script.ino](button_led_script.ino)
-
-```cpp
-const int LED_PIN = 12;
-const int BUTTON_PIN = 2;
-
-bool ledState = LOW;
-bool lastButton = HIGH;
+int currentSpeed = 0;
 
 void setup() {
-  pinMode(LED_PIN, OUTPUT);
-  pinMode(BUTTON_PIN, INPUT_PULLUP);  
-  digitalWrite(LED_PIN, ledState);
-  Serial.begin(9600);
+  stepper.setMaxSpeed(MAX_SPEED);
 }
 
 void loop() {
-  bool reading = digitalRead(BUTTON_PIN);
-  if (lastButton == HIGH && reading == LOW) {
-    ledState = !ledState;
-    digitalWrite(LED_PIN, ledState);
-    Serial.println(ledState ? "LED ON" : "LED OFF");
-    delay(200); // debounce
+  int x = analogRead(JOY_X) - 512;  // read joystick X, centered at 0
+
+  if (abs(x) < DEADZONE) {
+    // Joystick released → stop
+    currentSpeed = 0;
+  } else if (x > 0) {
+    // Joystick right → accelerate clockwise
+    currentSpeed += ACCEL_STEP;
+    if (currentSpeed > MAX_SPEED) currentSpeed = MAX_SPEED;
+  } else {
+    // Joystick left → accelerate counterclockwise
+    currentSpeed -= ACCEL_STEP;
+    if (currentSpeed < -MAX_SPEED) currentSpeed = -MAX_SPEED;
   }
-  lastButton = reading;
+
+  stepper.setSpeed(currentSpeed);
+  stepper.runSpeed();  // run motor at current speed
 }
