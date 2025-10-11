@@ -1,69 +1,91 @@
-# Button-Controlled LED 💡
+# 💧 Water Level Detector
 
-## Overview
-This is my first Arduino project: pressing a button turns an LED on and off.  
-It’s a beginner-friendly introduction to **digital inputs**, **digital outputs**, and how to wire a basic circuit with Arduino.
-
----
-
-## Media
-
-### Real Circuit Photo
-This is my real circuit wired on a breadboard:  
-![Button LED Circuit](button_led_image.JPG)
-
-### Demo Video
-Here’s the LED working in real life (click to download or view):  
-[Button LED Demo](button_led_demonstration.MOV)
-
-### TinkerCAD Simulation (Video)
-Beginner-friendly online simulation of the same circuit, recorded from TinkerCAD:  
-[Button LED TinkerCAD Demo](button_led_tinkercat.mov)
+An Arduino project that measures water levels using the **Water Sensor Module** from the Elegoo kit.  
+It lights up LEDs (green, yellow, red) based on detected level, and activates a buzzer when the level exceeds a threshold.
 
 ---
 
-## Components
-- Arduino Mega 2560 (Elegoo)  
-- 1× Pushbutton  
-- 1× LED  
-- 1× 220 Ω resistor  
-- Jumper wires + breadboard  
+## ⚙️ Files Included
+
+| File | Description |
+|------|--------------|
+| `waterleveldetector.ino` | Main Arduino code controlling LEDs and buzzer |
+| `waterleveldetector_fritzing` | Fritzing circuit diagram |
+| `waterlevelimage.JPG` | Photo of the assembled circuit |
+| `waterleveldetector.MOV` | Demo video showing the working system |
 
 ---
 
-## Wiring
-- Button leg 1 → Pin 2  
-- Button leg 2 → GND  
-- LED anode (long leg) → resistor → Pin 12  
-- LED cathode (short leg) → GND  
+## 🔧 Components Used
+
+- Arduino Uno / Mega 2560  
+- Water Level Sensor Module  
+- 3 LEDs (Green, Yellow, Red)  
+- 1 Buzzer  
+- Breadboard + Jumper Wires  
 
 ---
 
-## Code
-Arduino sketch for this project:  
-[button_led_script.ino](button_led_script.ino)
+## 🖼️ Circuit Diagram
+
+![Circuit Diagram](waterleveldetector_fritzing)
+
+---
+
+## 📸 Project Image
+
+![Assembled Project](waterlevelimage.JPG)
+
+---
+
+## 💻 Code
 
 ```cpp
-const int LED_PIN = 12;
-const int BUTTON_PIN = 2;
+const int analogInPin = A0;
+int sensorValue = 0;
 
-bool ledState = LOW;
-bool lastButton = HIGH;
+// LED pins
+const int greenLED = 2;
+const int yellowLED = 3;
+const int redLED = 4;
+const int buzzer = 5; // Buzzer pin
+
+// Ranges
+const int GREEN_MIN = 50;
+const int GREEN_MAX = 200;
+const int YELLOW_MIN = 200;
+const int YELLOW_MAX = 340;
+const int RED_MIN = 340;
 
 void setup() {
-  pinMode(LED_PIN, OUTPUT);
-  pinMode(BUTTON_PIN, INPUT_PULLUP);  
-  digitalWrite(LED_PIN, ledState);
   Serial.begin(9600);
+  pinMode(greenLED, OUTPUT);
+  pinMode(yellowLED, OUTPUT);
+  pinMode(redLED, OUTPUT);
+  pinMode(buzzer, OUTPUT);
 }
 
 void loop() {
-  bool reading = digitalRead(BUTTON_PIN);
-  if (lastButton == HIGH && reading == LOW) {
-    ledState = !ledState;
-    digitalWrite(LED_PIN, ledState);
-    Serial.println(ledState ? "LED ON" : "LED OFF");
-    delay(200); // debounce
+  sensorValue = analogRead(analogInPin);
+  Serial.print("Sensor = ");
+  Serial.println(sensorValue);
+
+  // Turn everything OFF first
+  digitalWrite(greenLED, LOW);
+  digitalWrite(yellowLED, LOW);
+  digitalWrite(redLED, LOW);
+  digitalWrite(buzzer, LOW);
+
+  if (sensorValue >= GREEN_MIN && sensorValue < GREEN_MAX) {
+    digitalWrite(greenLED, HIGH);
+  } 
+  else if (sensorValue >= YELLOW_MIN && sensorValue < YELLOW_MAX) {
+    digitalWrite(yellowLED, HIGH);
+  } 
+  else if (sensorValue >= RED_MIN) {
+    digitalWrite(redLED, HIGH);
+    digitalWrite(buzzer, HIGH);
   }
-  lastButton = reading;
+
+  delay(100);
 }
