@@ -1,40 +1,48 @@
-# 💧 Water Level Detector
+# 💧 Water Level Detector (Arduino)
 
-An Arduino project that measures water levels using the **Water Sensor Module** from the Elegoo kit.  
-It lights up LEDs (green, yellow, red) based on detected level, and activates a buzzer when the level exceeds a threshold.
-
----
-
-## ⚙️ Files Included
-
-| File | Description |
-|------|--------------|
-| `waterleveldetector.ino` | Main Arduino code controlling LEDs and buzzer |
-| `waterleveldetector_fritzing` | Fritzing circuit diagram |
-| `waterlevelimage.JPG` | Photo of the assembled circuit |
-| `waterleveldetector.MOV` | Demo video showing the working system |
+An Arduino project that measures water level with the Elegoo **Water Sensor Module** and shows status with **green / yellow / red** LEDs. A **buzzer** sounds at high level.
 
 ---
 
-## 🔧 Components Used
+## 📦 What’s in this repo
 
-- Arduino Uno / Mega 2560  
-- Water Level Sensor Module  
-- 3 LEDs (Green, Yellow, Red)  
-- 1 Buzzer  
-- Breadboard + Jumper Wires  
+- `waterleveldetector.mov` — demo video  
+- `waterleveldetector_fritzing.png` — circuit diagram  
+- `waterlevelimage.JPG` — photo of the assembled circuit  
+- `waterleveldetector.ino` — Arduino code (see below)
 
----
-
-## 🖼️ Circuit Diagram
-
-![Circuit Diagram](waterleveldetector_fritzing)
+> If your sketch is named differently, that’s fine—just keep it in the repo root.
 
 ---
 
-## 📸 Project Image
+## 🖼️ Circuit
+
+![Fritzing Diagram](waterleveldetector_fritzing.png)
+
+Photo of the build:
 
 ![Assembled Project](waterlevelimage.JPG)
+
+---
+
+## 🔧 Parts
+
+- Arduino Uno/Mega  
+- Water Level Sensor Module (analogue) → **A0**  
+- LEDs: **Green (D2)**, **Yellow (D3)**, **Red (D4)**  
+- **Buzzer (D5)**  
+- Breadboard + jumpers
+
+**Wiring (quick table)**
+
+| Sensor pin | Arduino |
+|---|---|
+| S (Signal) | A0 |
+| + | 5V |
+| – | GND |
+
+LEDs each go from the digital pin through a 220–330 Ω resistor to the LED, then to GND.  
+Buzzer `+` → D5, `–` → GND.
 
 ---
 
